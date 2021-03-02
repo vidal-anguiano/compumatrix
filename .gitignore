@@ -1,3 +1,4 @@
 *.csv
 outputs/*
 shapefiles/*
+__pycache__/*
