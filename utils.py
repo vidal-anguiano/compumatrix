@@ -243,8 +243,8 @@ def get_pwcs(states, geo, outpath, replace=False):
 
     pwcs = pd.concat([pd.read_csv(path) for path in pwc_files])
 
-    zfill = {'zip'   : 5,
-             'tract' : 9,
+    zfill = {'zip'   : 7,
+             'tract' : 11,
              'county': 3}
 
     pwcs['GEOID'] = pwcs['GEOID'].apply(lambda x: str(x).zfill(zfill[geo]))
