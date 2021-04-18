@@ -33,7 +33,7 @@ def create_od_pairs(state_abbr, buffer, geo, outpath, o_feature = 'boundary', d_
     '''
     file_path = os.path.join(outpath, 'outputs', geo, state_abbr.upper(), f'{state_abbr.upper()}-odpairs-{buffer}m-{geo.upper()}.csv')
 
-    if os.path.isfile(file_path) or replace:
+    if not os.path.isfile(file_path) or replace:
         dl_dir, out_dir, file = utils.get_resource(state_abbr, geo, outpath)
         origins = gpd.read_file(os.path.join(dl_dir, file))[['GEOID10', 'geometry']]
         origins['oX'], origins['oY'] = create_xy_coords(gdf      = origins,
@@ -67,6 +67,9 @@ def create_od_pairs(state_abbr, buffer, geo, outpath, o_feature = 'boundary', d_
         result.to_csv(file_path, index=False)
 
         return result
+
+    else:
+        print(f'{os.path.abspath(file_path)} already exists.')
 
 def create_xy_coords(gdf, states, centroid, geo, outpath):
     '''

@@ -183,7 +183,7 @@ def get_bordering_states(state_abbr, outpath):
     if state_abbr.lower() == 'dc':
         return ['va', 'md', 'de']
 
-    origin_state = states.copy()[states.STATEFP10 == FIPS[state_abbr]]
+    origin_state = states.copy()[states.STATEFP10 == FIPS[state_abbr.lower()]]
     origin_state['geometry'] = origin_state.buffer(.5)
     bordering = gpd.sjoin(states, origin_state, how = 'inner', op = 'intersects')
     states_list = [rFIPS[x] for x in list(bordering.STATEFP10_left)]
