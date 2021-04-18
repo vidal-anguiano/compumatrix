@@ -1,6 +1,7 @@
 import os
 import csv
 import json
+import time
 import requests
 import pandas as pd
 from collections import defaultdict
@@ -80,6 +81,7 @@ def make_osrm_request(base_url, coordinates, sources=None, destinations=None):
         destinations = [str(x) for x in destinations]
         destinations = ';'.join(destinations)
 
+
     return requests.get(request_url, params = {'sources': sources,
                                                'destinations': destinations}).text
 
@@ -98,22 +100,46 @@ def results_to_df(origin, destinations, durations):
     return result[['origin', 'destination', 'minutes']]
 
 
-def get_durations(base_url, packages, out_dir):
+def get_durations(base_url, state_abbr, geo, buffer, outpath):
+    state_path = os.path.join(outpath, 'outputs', geo, state_abbr.upper())
+    osrm_inputs = os.path.join(state_path, f'{state_abbr.upper()}_osrm_inputs.json')
+
+    assert os.path.isfile(osrm_inputs), f"osrm_inputs file for {state_abbr.upper()} does not exist."
+
+    parts_path = os.path.join(state_path, 'parts')
+
+    if not os.path.isdir(parts_path):
+        os.makedirs(parts_path)
+
+    inputs = json.load(open(osrm_inputs))
+
     count = 0
-    total = len(packages)
-    for origin, contents in packages.items():
+    total = len(inputs)
+
+    for origin, contents in inputs.items():
         print(f'Working on {origin}...')
+        id = contents['destinations'].index(origin)
+        print(origin, id)
         req = make_osrm_request(base_url, coordinates = contents['coordinates'],
-                                          sources = [0])
+                                          sources = [id])
 
         durations = extract_durations(req)
 
-        df = results_to_df(origin, destinations = contents['destinations'],
-                                   durations = durations)
+        # df = results_to_df(origin, destinations = contents['destinations'],
+        #                            durations = durations)
 
-        df.to_csv(os.path.join(out_dir, f'matrix_subset_{origin}.csv'), index = False)
+        # df.to_csv(os.path.join(out_dir, f'matrix_subset_{origin}.csv'), index = False)
+
+        with open(os.path.join(parts_path, f'subset_{origin}.csv'), 'w') as csvfile:
+            csvwriter = csv.writer(csvfile)
+
+            for i, dest in enumerate(contents['destinations']):
+                csvwriter.writerow([origin, dest, round(durations[i] / 60, 2)])
+
         print(f'{count} of {total} completed')
         count += 1
+
+        time.sleep(5)
 
 
 
