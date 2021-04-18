@@ -63,7 +63,7 @@ def prepare_osrm_inputs(state_abbr, geo, buffer, outpath):
         print(f"OSRM inputs for {state_abbr.upper()} complete!")
 
     else:
-        print(f"OSRM inputs for {state_abbr.upper()} already exists!")"
+        print(f"OSRM inputs for {state_abbr.upper()} already exists!")
 
 def create_base_url(ip, port):
     base_url = 'http://' + str(ip) + ':' + str(port) + '/table/v1/driving/'
