@@ -1,9 +1,11 @@
 import os
+import csv
 import json
 import requests
 import pandas as pd
+from collections import defaultdict
 
-def create_json_obj(mappings):
+def create_json_obj_dep(mappings):
     obj = {}
     mappings['o_coords'] = mappings.apply(lambda x: str(x.oX) + ',' + str(x.oY), axis = 1)
     mappings['d_coords'] = mappings.apply(lambda x: str(x.dX) + ',' + str(x.dY), axis = 1)
@@ -25,6 +27,22 @@ def create_json_obj(mappings):
             sub_obj['coordinates']  = mappings[mappings['origin']  == origin].o_coords.iloc[0]
 
         obj[o_key] = sub_obj
+
+    return obj
+
+def create_json_obj(csv_file):
+    def def_val():
+        return {'destinations':[],
+                'coordinates': []}
+
+    obj = defaultdict(def_val)
+    with open(csv_file) as f:
+        reader = csv.reader(f)
+        next(reader)
+        for row in reader:
+            origin = row[0]
+            obj[origin]['destinations'] = obj[origin]['destinations'] + [row[3]]
+            obj[origin]['coordinates'] = obj[origin]['coordinates'] + [row[4] + ',' + row[5]]
 
     return obj
 
