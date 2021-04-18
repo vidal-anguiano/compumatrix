@@ -43,7 +43,7 @@ def create_od_pairs(state_abbr, buffer, geo, outpath, o_feature = 'boundary', d_
                                                         outpath  = outpath)
 
         border_states = utils.get_bordering_states(state_abbr, outpath)
-        destinations = utils.border_states_geodf(border_states, geo, outpath)[['GEOID10', 'geometry']]
+        destinations = utils.border_states_geodf(border_states, geo, outpath)[['GEOID10', 'geometry']].reset_index(drop=True)
         destinations['dX'], destinations['dY'] = create_xy_coords(gdf      = destinations,
                                                                   states   = border_states,
                                                                   centroid = centroid,
