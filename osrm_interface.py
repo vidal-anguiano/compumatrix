@@ -55,12 +55,15 @@ def prepare_osrm_inputs(state_abbr, geo, buffer, outpath):
 
     assert os.path.isfile(odpairs_file_path), f"odpairs file for {state_abbr.upper()} does not exist."
 
-    inputs = create_json_obj(odpairs_file_path)
-    print(f"Writing OSRM inputs for {state_abbr.upper()} to json file...")
-    with open(write_to, 'w') as fp:
-        json.dump(inputs, fp)
-    print(f"OSRM inputs for {state_abbr.upper()} complete!")
+    if not os.path.isfile(write_to):
+        inputs = create_json_obj(odpairs_file_path)
+        print(f"Writing OSRM inputs for {state_abbr.upper()} to json file...")
+        with open(write_to, 'w') as fp:
+            json.dump(inputs, fp)
+        print(f"OSRM inputs for {state_abbr.upper()} complete!")
 
+    else:
+        print(f"OSRM inputs for {state_abbr.upper()} already exists!")"
 
 def create_base_url(ip, port):
     base_url = 'http://' + str(ip) + ':' + str(port) + '/table/v1/driving/'
