@@ -139,7 +139,7 @@ def get_durations(base_url, state_abbr, geo, buffer, outpath):
         print(f'{count} of {total} completed')
         count += 1
 
-        time.sleep(5)
+        # time.sleep(5)
 
 
 
