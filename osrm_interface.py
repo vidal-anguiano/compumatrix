@@ -104,7 +104,7 @@ def results_to_df(origin, destinations, durations):
     return result[['origin', 'destination', 'minutes']]
 
 
-def get_durations(base_url, state_abbr, geo, buffer, outpath):
+def get_durations(base_url, state_abbr, geo, buffer, outpath, num):
     state_path = os.path.join(outpath, 'outputs', geo, state_abbr.upper())
     osrm_inputs = os.path.join(state_path, f'{state_abbr.upper()}_osrm_inputs.json')
 
@@ -140,7 +140,7 @@ def get_durations(base_url, state_abbr, geo, buffer, outpath):
             for i, dest in enumerate(contents['destinations']):
                 csvwriter.writerow([origin, dest, round(durations[i] / 60, 2)])
 
-        print(f'{count} of {total} completed')
+        print(f'Number {num}: {count} of {total} completed for {state_abbr.upper()}')
         count += 1
 
         # time.sleep(5)
