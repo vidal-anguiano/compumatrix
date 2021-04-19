@@ -138,6 +138,7 @@ def get_durations(base_url, state_abbr, geo, buffer, outpath, num):
             csvwriter = csv.writer(csvfile)
 
             for i, dest in enumerate(contents['destinations']):
+                print(durations[i], type(durations[i]))
                 csvwriter.writerow([origin, dest, round(durations[i] / 60, 2)])
 
         print(f'Number {num}: {count} of {total} completed for {state_abbr.upper()}')
