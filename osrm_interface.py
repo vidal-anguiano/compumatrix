@@ -31,18 +31,22 @@ def create_json_obj_dep(mappings):
 
     return obj
 
-def create_json_obj(csv_file):
+def create_json_obj(csv_file, geo):
     def def_val():
         return {'destinations':[],
                 'coordinates': []}
+
+    zfill = {'zip'   : 7,
+             'tract' : 11,
+             'county': 3}
 
     obj = defaultdict(def_val)
     with open(csv_file) as f:
         reader = csv.reader(f)
         next(reader)
         for row in reader:
-            origin = row[0]
-            obj[origin]['destinations'] = obj[origin]['destinations'] + [row[3]]
+            origin = str(row[0]).zfill(zfill[geo.lower()])
+            obj[origin]['destinations'] = obj[origin]['destinations'] + str([row[3]).zfill(zfill[geo.lower()])]
             obj[origin]['coordinates'] = obj[origin]['coordinates'] + [row[4] + ',' + row[5]]
 
     return obj
@@ -57,7 +61,7 @@ def prepare_osrm_inputs(state_abbr, geo, buffer, outpath):
     assert os.path.isfile(odpairs_file_path), f"odpairs file for {state_abbr.upper()} does not exist."
 
     if not os.path.isfile(write_to):
-        inputs = create_json_obj(odpairs_file_path)
+        inputs = create_json_obj(odpairs_file_path, geo)
         print(f"Writing OSRM inputs for {state_abbr.upper()} to json file...")
         with open(write_to, 'w') as fp:
             json.dump(inputs, fp)
