@@ -46,7 +46,7 @@ def create_json_obj(csv_file, geo):
         next(reader)
         for row in reader:
             origin = str(row[0]).zfill(zfill[geo.lower()])
-            obj[origin]['destinations'] = obj[origin]['destinations'] + str([row[3]).zfill(zfill[geo.lower()])]
+            obj[origin]['destinations'] = obj[origin]['destinations'] + [str(row[3]).zfill(zfill[geo.lower()])]
             obj[origin]['coordinates'] = obj[origin]['coordinates'] + [row[4] + ',' + row[5]]
 
     return obj
