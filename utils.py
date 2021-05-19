@@ -254,6 +254,7 @@ def get_pwcs(states, geo, outpath, replace=False):
     return pwcs[['GEOID', 'X', 'Y']]
 
 def aggregate_parts(state_abbr, geo, outpath):
+    print(f'Working on {state_abbr.upper()}...')
     base_dir = os.path.join(outpath, 'outputs', geo, state_abbr.upper())
     parts_dir = os.path.join(base_dir, 'parts')
     print(parts_dir)
@@ -267,9 +268,10 @@ def aggregate_parts(state_abbr, geo, outpath):
         csvwriter.writerow(['origin', 'destination', 'minutes'])
 
         for file in parts:
-            print(file)
+            # print(file)
             f = open(file)
             for line in f:
                 clean_line = line.replace('\n','').split(',')
                 csvwriter.writerow(clean_line)
             f.close()
+    print(f'{state_abbr.upper()} has been aggregated!')
