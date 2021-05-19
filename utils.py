@@ -181,7 +181,7 @@ def get_bordering_states(state_abbr, outpath):
     states = gpd.read_file(os.path.join(dl_dir, file))
 
     if state_abbr.lower() == 'dc':
-        return ['va', 'md', 'de']
+        return ['va', 'md', 'de', 'dc']
 
     origin_state = states.copy()[states.STATEFP10 == FIPS[state_abbr.lower()]]
     origin_state['geometry'] = origin_state.buffer(.5)
