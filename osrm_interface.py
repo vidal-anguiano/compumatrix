@@ -92,7 +92,12 @@ def make_osrm_request(base_url, coordinates, sources=None, destinations=None):
 
 def extract_durations(request_result):
     result = json.loads(request_result)
-    return result['durations'][0]
+    try:
+        durations = result['durations'][0]
+    except:
+        durations = [0]
+
+    return durations
 
 
 def results_to_df(origin, destinations, durations):
