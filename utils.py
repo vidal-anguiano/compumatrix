@@ -257,7 +257,6 @@ def aggregate_parts(state_abbr, geo, outpath):
     print(f'Working on {state_abbr.upper()}...')
     base_dir = os.path.join(outpath, 'outputs', geo, state_abbr.upper())
     parts_dir = os.path.join(base_dir, 'parts')
-    print(parts_dir)
     parts = glob.glob(parts_dir + '/subset_*.csv')
 
     outfile_path = os.path.join(base_dir, f'{state_abbr.upper()}-matrix-{geo.upper()}.csv')
@@ -268,7 +267,6 @@ def aggregate_parts(state_abbr, geo, outpath):
         csvwriter.writerow(['origin', 'destination', 'minutes'])
 
         for file in parts:
-            # print(file)
             f = open(file)
             for line in f:
                 clean_line = line.replace('\n','').split(',')
