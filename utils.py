@@ -1,7 +1,9 @@
 import os
-import centroids
+import csv
+import glob
 import urllib
 import zipfile
+import centroids
 import pandas as pd
 import geopandas as gpd
 
@@ -250,3 +252,24 @@ def get_pwcs(states, geo, outpath, replace=False):
     pwcs['GEOID'] = pwcs['GEOID'].apply(lambda x: str(x).zfill(zfill[geo]))
 
     return pwcs[['GEOID', 'X', 'Y']]
+
+def aggregate_parts(state_abbr, geo, outpath):
+    base_dir = os.path.join(outpath, 'outputs', geo, state_abbr.upper())
+    parts_dir = os.path.join(base_dir, 'parts')
+    print(parts_dir)
+    parts = glob.glob(parts_dir + '/subset_*.csv')
+
+    outfile_path = os.path.join(base_dir, f'{state_abbr.upper()}-matrix-{geo.upper()}.csv')
+
+    with open(outfile_path, 'w') as csvfile:
+        csvwriter = csv.writer(csvfile)
+
+        csvwriter.writerow(['origin', 'destination', 'minutes'])
+
+        for file in parts:
+            print(file)
+            f = open(file)
+            for line in f:
+                clean_line = line.replace('\n','').split(',')
+                csvwriter.writerow(clean_line)
+            f.close()
