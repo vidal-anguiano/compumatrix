@@ -2,3 +2,5 @@
 outputs/*
 shapefiles/*
 __pycache__/*
+archive/*
+data/*

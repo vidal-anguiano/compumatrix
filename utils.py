@@ -29,6 +29,38 @@ rFIPS = {'01':'al','02':'ak','04':'az','05':'ar','06':'ca','08':'co',
          '54':'wv','55':'wi','56':'wy','60':'as','66':'gu','69':'mp',
          '72':'pr','78':'vi','us':'us'}
 
+def get_resource_file_name(state_abbr, geo, year=2010):
+    '''
+    Generates filename for desired state and geo type.
+
+    Parameters
+    ----------
+    state_abbr : str
+        Two letter abbreviation for state
+    geo : {'tract', 'county', 'zip', 'block', 'block_pop'}
+        String name of the boundary level to use
+    year : int
+        Year of TIGER data to use
+
+    Returns
+    -------
+    filename : str
+        String name of the resource file
+    '''
+
+    state_id = FIPS[state_abbr.lower()]
+
+    FILE = {'block_pop': "tabblock" + str(year) + "_" + str(state_id).zfill(2) + "_pophu",
+            'county'   : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_county10",
+            'block'    : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_tabblock10",
+            'state'    : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_state10",
+            'tract'    : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_tract10",
+            'zip'      : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_zcta510",}
+
+    if state_id == 'us' and geo == 'tract':
+        return 'tl_2010_us_ttract10'
+
+    return FILE[geo]
 
 def get_resource_url(state_abbr, geo, year=2010):
     '''
@@ -57,17 +89,12 @@ def get_resource_url(state_abbr, geo, year=2010):
             'tract'    : "https://www2.census.gov/geo/tiger/TIGER" + str(year) + "/TRACT/" + str(year) + "/",
             'zip'      : "https://www2.census.gov/geo/tiger/TIGER" + str(year) + "/ZCTA5/"+ str(year) + "/",}
 
-    FILE = {'block_pop': "tabblock" + str(year) + "_" + str(state_id).zfill(2) + "_pophu",
-            'county'   : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_county10",
-            'block'    : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_tabblock10",
-            'state'    : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_state10",
-            'tract'    : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_tract10",
-            'zip'      : "tl_" + str(year) + "_" + str(state_id).zfill(2) + "_zcta510",}
+    filename = get_resource_file_name(state_abbr, geo, year)
 
     if state_id == 'us' and geo == 'tract':
-        return 'https://www2.census.gov/geo/pvs/tiger2010st/tl_2010_us_ttract10.zip'
+        return 'https://www2.census.gov/geo/pvs/tiger2010st/{}.zip'.format(filename)
 
-    return URL[geo] + FILE[geo] + '.zip'
+    return URL[geo] + filename + '.zip'
 
 
 def setup_dirs(state_abbr, geo, outdir):
@@ -90,12 +117,13 @@ def setup_dirs(state_abbr, geo, outdir):
     '''
     dir_paths = ()
 
-    for dir in ['shapefiles', 'outputs']:
+    for dir in ['shapefiles', 'outputs', 'inputs']:
         dir_path = os.path.join(outdir, dir, geo, state_abbr.upper())
         if not os.path.isdir(dir_path):
             os.makedirs(dir_path)
 
-        dir_paths = dir_paths + (dir_path,)
+        if dir != 'inputs':
+            dir_paths = dir_paths + (dir_path,)
 
     return dir_paths
 
